@@ -1,7 +1,8 @@
-from flask import Flask, session, request, redirect, jsonify
+from flask import Flask, session, redirect, jsonify
 from flask_session import Session
 from dotenv import load_dotenv
 from pprint import pprint
+from auth.authenticate_user import login_user, authenticate_user
 import spotipy
 import os
 
@@ -22,32 +23,12 @@ scopes = 'user-read-currently-playing,playlist-read-private, playlist-read-colla
 
 @app.route('/api/login')
 def login():
-    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
-    auth_manager = spotipy.oauth2.SpotifyOAuth(
-        scope=scopes,
-        cache_handler=cache_handler,
-        show_dialog=True,
-        client_id=SPOTIFY_APP_CLIENT_ID,
-        client_secret=SPOTIFY_APP_CLIENT_SECRET,
-        redirect_uri=SPOTIFY_APP_REDIRECT_URI)
-    try:
-        # Step 2. Check to see if the code from spotify is in the URL
-        if request.args.get("code"):
-            auth_manager.get_access_token(request.args.get("code"))
+    current_user = login_user(session)
+    if type(current_user) is str:
+        if current_user == "logged_in":
             return redirect('/api/login')
-
-        # Step 1. Check if a token was previously used.
-        #        If not, then present them with a login link
-        if not auth_manager.validate_token(cache_handler.get_cached_token()):
-            auth_url = auth_manager.get_authorize_url()
-            return(jsonify({"sessionURL": auth_url}))
-
-        # Step 3. User signed in
-        spotify = spotipy.Spotify(auth_manager=auth_manager)
-        return(spotify.me())
-
-    except Exception:
-        return(f'Error with type {Exception}')
+        return(jsonify({"sessionURL": current_user}))
+    return(current_user.me())
 
 
 @app.route('/api/sign_out')
@@ -58,16 +39,31 @@ def sign_out():
 
 @app.route('/api/userInfo')
 def grab_user_info():
-    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
-    auth_manager = spotipy.oauth2.SpotifyOAuth(
-        scope=scopes,
-        cache_handler=cache_handler,
-        show_dialog=True,
-        client_id=SPOTIFY_APP_CLIENT_ID,
-        client_secret=SPOTIFY_APP_CLIENT_SECRET,
-        redirect_uri=SPOTIFY_APP_REDIRECT_URI)
-    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+    if not authenticate_user(session):
         return redirect('/api/login')
 
-    spotify = spotipy.Spotify(auth_manager=auth_manager)
-    return jsonify(spotify.me())
+    return jsonify()
+
+
+@app.route('/api/userPLaylists')
+def grab_user_playlists():
+    if not authenticate_user(session):
+        return redirect('/api/login')
+
+
+@app.route('/api/userRecentPLays')
+def grab_user_recent_plays():
+    if not authenticate_user(session):
+        return redirect('/api/login')
+
+
+@app.route('/api/userTracks')
+def grab_user_tracks():
+    if not authenticate_user(session):
+        return redirect('/api/login')
+
+
+@app.route('/api/userTopTracks')
+def grab_user_top_tracks():
+    if not authenticate_user(session):
+        return redirect('/api/login')

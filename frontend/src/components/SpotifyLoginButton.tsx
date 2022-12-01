@@ -49,6 +49,7 @@ let loginUserToSpotify = async (
     setAuthLink(res.data.sessionURL);
   }
   if (res.data.id) {
+    console.log("It worked!!!!");
     setUserLoggedIn(true);
   }
   return res.data;
