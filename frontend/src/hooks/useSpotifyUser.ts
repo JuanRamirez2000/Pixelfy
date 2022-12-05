@@ -1,49 +1,73 @@
 import axios from "axios";
 import { useQueries } from "react-query";
+import { SpotifyUser } from "../interfaces/spotifyInterfaces";
+import userInfoQueryInterface from "../interfaces/userInfoQueryInterface";
 
-export default function useSpotifyUsers() {
-  const [userQuery, playlistQuery, recentsQuery, tracksQuery, topTracksQuery] =
-    useQueries([
-      {
-        queryKey: ["user"],
-        queryFn: getUserInfo,
-      },
-      {
-        queryKey: ["playlists"],
-        queryFn: getUserPlaylists,
-      },
-      {
-        queryKey: ["recents"],
-        queryFn: getUserRecentPlays,
-      },
-      {
-        queryKey: ["tracks"],
-        queryFn: getUserTracks,
-      },
-      {
-        queryKey: ["topTracks"],
-        queryFn: getUserTopTracks,
-      },
-    ]);
+export default function useSpotifyUser(
+  userQueryInfo: userInfoQueryInterface
+): SpotifyUser {
+  let user: any = {};
+  const userQueries = useQueries([
+    {
+      queryKey: ["user"],
+      queryFn: getUserInfo,
+    },
+    {
+      queryKey: ["playlists"],
+      queryFn: getUserPlaylists,
+    },
+    {
+      queryKey: ["recents"],
+      queryFn: getUserRecentPlays,
+    },
+    {
+      queryKey: ["tracks"],
+      queryFn: getUserTracks,
+    },
+    {
+      queryKey: ["topTracks"],
+      queryFn: getUserTopTracks,
+    },
+  ]);
+  if (userQueries.every((query) => query.status === "success")) {
+    user.userInfo = userQueries[0].data;
+    user.userPlaylists = userQueries[1].data;
+    user.userRecentPlays = userQueries[2].data;
+    user.userTracks = userQueries[3].data;
+    user.userTopTracks = userQueries[4].data;
+  }
+  return user;
 }
 
 let getUserInfo = async () => {
-  const res = await axios.get("/api/userInfo");
+  //* Current_User Spotipy API Endpoint
+  //* No props needed
+  const res = await axios.get("/api/user_info");
   return res.data;
 };
 let getUserPlaylists = async () => {
-  const res = await axios.get("/api/userPlaylists");
+  //* Current_User_Playlists Spotipy API Endpoint
+  //* Limit of 50 playlist in one request
+  const res = await axios.get("/api/user_playlists");
   return res.data;
 };
 let getUserRecentPlays = async () => {
-  const res = await axios.get("/api/userRecentPlays");
+  //* Current_User_Recently_Played Spotipy API Endpoint
+  //* After and Before in UNIX timestamp in ms
+  //* Will try to offset
+  const res = await axios.get("/api/user_recent_plays");
   return res.data;
 };
 let getUserTracks = async () => {
-  const res = await axios.get("/api/userTracks");
+  //* Current_User_Recently_Saved_Tracks Spotipy API Endpoint
+  //* Limit 20
+  const res = await axios.get("/api/user_tracks");
   return res.data;
 };
 let getUserTopTracks = async () => {
-  const res = await axios.get("/api/userTopTracks");
+  //* Current_User_Top_Tracks Spotipy API Endpoint
+  //* Limit 20
+  //* time_range of values [short_term, medium_term(default), long_term]
+  const res = await axios.get("/api/user_top_tracks");
   return res.data;
 };

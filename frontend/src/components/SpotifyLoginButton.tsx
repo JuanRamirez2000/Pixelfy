@@ -26,6 +26,7 @@ export default function SpotifyLoginButton({
     );
   return (
     <div>
+      <h2 className="text-3xl"> Please Log In! </h2>
       <a href={authLink}> Login </a>
     </div>
   );
@@ -49,7 +50,6 @@ let loginUserToSpotify = async (
     setAuthLink(res.data.sessionURL);
   }
   if (res.data.id) {
-    console.log("It worked!!!!");
     setUserLoggedIn(true);
   }
   return res.data;

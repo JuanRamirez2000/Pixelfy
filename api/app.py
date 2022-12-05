@@ -1,8 +1,8 @@
-from flask import Flask, session, redirect, jsonify
+from flask import Flask, session, redirect, request, jsonify
 from flask_session import Session
 from dotenv import load_dotenv
 from pprint import pprint
-from auth.authenticate_user import login_user, authenticate_user
+from auth.authenticate_user import login_user, authenticate_user, initialize_spotify
 import spotipy
 import os
 
@@ -37,33 +37,97 @@ def sign_out():
     return redirect('/')
 
 
-@app.route('/api/userInfo')
+@app.route('/api/user_info')
 def grab_user_info():
+    '''
+        Spotipy API Endpoint for /me (or /current_user)
+    '''
     if not authenticate_user(session):
         return redirect('/api/login')
+    try:
+        _, auth_manager = initialize_spotify(session)
+        spotify = spotipy.Spotify(auth_manager=auth_manager)
+        return(spotify.me())
+    except Exception:
+        return (f'No user was found')
 
-    return jsonify()
 
-
-@app.route('/api/userPLaylists')
+@app.route('/api/user_playlists')
 def grab_user_playlists():
+    '''
+        Spotipy API Endpoint for /current_user_playlists
+        has a limit of 50
+    '''
     if not authenticate_user(session):
         return redirect('/api/login')
+    try:
+        limit = request.args.get("playlist_limit")
+        _, auth_manager = initialize_spotify(session)
+        spotify = spotipy.Spotify(auth_manager=auth_manager)
+        playlists = spotify.current_user_playlists()
+        return playlists
+
+    except Exception:
+        return (f'Something went wrong with grabbing user playlists')
 
 
-@app.route('/api/userRecentPLays')
+@app.route('/api/user_recent_plays')
 def grab_user_recent_plays():
+    '''
+        Spotipy API Endpoint for /current_user_recently_played
+        has a limit of 50
+    '''
     if not authenticate_user(session):
         return redirect('/api/login')
 
+    try:
+        limit = request.args.get("recents_limit")
+        _, auth_manager = initialize_spotify(session)
+        spotify = spotipy.Spotify(auth_manager=auth_manager)
+        recents = spotify.current_user_recently_played()
+        return(recents)
 
-@app.route('/api/userTracks')
+    except Exception:
+        return (f'Something went wrong with grabbing recent plays')
+
+
+@app.route('/api/user_tracks')
 def grab_user_tracks():
+    '''
+        Spotipy API Endpoint for /current_user_saved_tracks
+        has a limit of 20
+    '''
     if not authenticate_user(session):
         return redirect('/api/login')
 
+    try:
+        limit = request.args.get("saved_tracks_limit")
+        _, auth_manager = initialize_spotify(session)
+        spotify = spotipy.Spotify(auth_manager=auth_manager)
+        saved_tracks = spotify.current_user_saved_tracks()
+        return(saved_tracks)
 
-@app.route('/api/userTopTracks')
+    except Exception:
+        return (f'Something went wrong with grabbing saved tracks')
+
+
+@app.route('/api/user_top_tracks')
 def grab_user_top_tracks():
+    '''
+        Spotipy API Endpoint for /current_user_top_tracks
+        has a limit of 20
+        has a time_range of [short_term, medium_term(default), long_term]
+    '''
     if not authenticate_user(session):
         return redirect('/api/login')
+
+    try:
+        limit = request.args.get("tracks_limit")
+        time_range = request.args.get("time_range")
+        _, auth_manager = initialize_spotify(session)
+        spotify = spotipy.Spotify(auth_manager=auth_manager)
+        tracks = spotify.current_user_top_tracks()
+        return(tracks)
+
+    except Exception:
+        return (f'Something went wrong with grabbing top tracks')
