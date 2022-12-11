@@ -8,7 +8,7 @@ export default function SpotifyLoginButton({
   setUserLoggedIn: React.Dispatch<boolean>;
 }) {
   const [authLink, setAuthLink] = useState<string>("");
-  const { isLoading, error, data } = useQuery("sessionURL", () =>
+  const { isLoading, error } = useQuery("sessionURL", () =>
     loginUserToSpotify(setUserLoggedIn, setAuthLink)
   );
 

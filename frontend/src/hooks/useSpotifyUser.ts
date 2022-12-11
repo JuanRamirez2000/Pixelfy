@@ -3,40 +3,54 @@ import { useQueries } from "react-query";
 import { SpotifyUser } from "../interfaces/spotifyInterfaces";
 import userInfoQueryInterface from "../interfaces/userInfoQueryInterface";
 
+interface UseSpotifyReturn {
+  user?: SpotifyUser;
+  loading: boolean;
+  error?: string;
+}
+
 export default function useSpotifyUser(
   userQueryInfo: userInfoQueryInterface
-): SpotifyUser {
-  let user: any = {};
-  const userQueries = useQueries([
-    {
-      queryKey: ["user"],
-      queryFn: getUserInfo,
-    },
-    {
-      queryKey: ["playlists"],
-      queryFn: getUserPlaylists,
-    },
-    {
-      queryKey: ["recents"],
-      queryFn: getUserRecentPlays,
-    },
-    {
-      queryKey: ["tracks"],
-      queryFn: getUserTracks,
-    },
-    {
-      queryKey: ["topTracks"],
-      queryFn: getUserTopTracks,
-    },
-  ]);
-  if (userQueries.every((query) => query.status === "success")) {
-    user.userInfo = userQueries[0].data;
-    user.userPlaylists = userQueries[1].data;
-    user.userRecentPlays = userQueries[2].data;
-    user.userTracks = userQueries[3].data;
-    user.userTopTracks = userQueries[4].data;
+): UseSpotifyReturn {
+  try {
+    let user: any = {};
+
+    const userQueries = useQueries([
+      {
+        queryKey: ["user"],
+        queryFn: getUserInfo,
+      },
+      {
+        queryKey: ["playlists"],
+        queryFn: getUserPlaylists,
+      },
+      {
+        queryKey: ["recents"],
+        queryFn: getUserRecentPlays,
+      },
+      {
+        queryKey: ["tracks"],
+        queryFn: getUserTracks,
+      },
+      {
+        queryKey: ["topTracks"],
+        queryFn: getUserTopTracks,
+      },
+    ]);
+    if (userQueries.every((query) => query.status === "success")) {
+      user.userInfo = userQueries[0].data;
+      user.userPlaylists = userQueries[1].data;
+      user.userRecentPlays = userQueries[2].data;
+      user.userTracks = userQueries[3].data;
+      user.userTopTracks = userQueries[4].data;
+      return { user: user, loading: false };
+    }
+
+    return { loading: true };
+  } catch (err) {
+    console.log(err);
+    return { loading: true, error: "Something Went Wrong!" };
   }
-  return user;
 }
 
 let getUserInfo = async () => {

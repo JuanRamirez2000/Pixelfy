@@ -89,6 +89,34 @@ interface Track {
   uri: string;
 }
 
+interface TrackAudioFeatures {
+  acousticness: number;
+  analysis_url: string;
+  danceability: string;
+  duration_ms: number;
+  energy: number;
+  id: string;
+  instrumentalness: number;
+  key: number;
+  liveliness: number;
+  loudness: number;
+  mode: number;
+  speechiness: number;
+  tempo: number;
+  time_signature: number;
+  track_href: string;
+  type: string;
+  uri: string;
+  valence: number;
+}
+
+interface TrackCompleteInfo {
+  trackArtist: string;
+  trackFeatures: TrackAudioFeatures;
+  trackName: string;
+  trackPopularity: number;
+}
+
 interface SpotifyUserInfo {
   display_name: string | null;
   id: string;
@@ -158,4 +186,6 @@ export type {
   SpotifyUserRecentPlays,
   SpotifyUserTopTracks,
   SpotifyUserTracks,
+  Track,
+  TrackCompleteInfo,
 };

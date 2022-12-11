@@ -1,5 +1,5 @@
 import "./App.css";
-import Home from "./pages/Home";
+import UserHome from "./pages/Home/UserHome";
 import {
   BrowserRouter as Router,
   Route,
@@ -25,7 +25,7 @@ function App() {
             )
           }
         />
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={<UserHome />} />
       </Routes>
     </Router>
   );

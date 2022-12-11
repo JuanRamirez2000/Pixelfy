@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import userInfoQueryInterface from "../../interfaces/userInfoQueryInterface";
+import userInfoQueryInterface from "../interfaces/userInfoQueryInterface";
 
 export default function UserInfoForm() {
   const { register, handleSubmit, watch } = useForm();
