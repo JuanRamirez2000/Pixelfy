@@ -25,10 +25,10 @@ Other notable tech
 - [x] Safe user logins with OAUTH2
 - [x] Users allowed to select the source of music (playlist, top songs, most recent)
 - [x] Basic Mood prediction and analysis using spotify features
-- [] Advanced Mood prediction using NLP and a trained NN
-- [] Generating images to post onto social media
-- [] End-To-End testing
-- [] Spotify's approval for a production-ready app
+- [ ] Advanced Mood prediction using NLP and a trained NN
+- [ ] Generating images to post onto social media
+- [ ] End-To-End testing
+- [ ] Spotify's approval for a production-ready app
 
 ## Lessons learned from the project
 * Handling sensitive user data
