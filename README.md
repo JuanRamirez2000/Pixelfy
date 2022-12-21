@@ -9,6 +9,7 @@ Frontend Tech
 * ReactJS
 * TypescriptJS
 * D3JS
+* TailwindCSS
 
 Backend tech
 * Flask
@@ -16,6 +17,7 @@ Backend tech
 
 Other tech
 * Google Cloud Project
+* Vite
 
 Other notable tech
 * Spotfy Web API
@@ -35,3 +37,4 @@ Other notable tech
 * Handling parallel queries
 * Error Handling
 * Test development and running
+* More advanced usage of Typescript
