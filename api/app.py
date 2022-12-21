@@ -139,23 +139,17 @@ def grab_multi_track_audio_features():
     if not authenticate_user(session):
         return redirect('/api/login')
 
-    try:
-        trackURIs = list(request.args.values())
-        _, auth_manager = initialize_spotify(session)
-        spotify = spotipy.Spotify(auth_manager=auth_manager)
-        track_audio_features = spotify.audio_features(trackURIs)
-
-        tracks = []
-        for track in track_audio_features:
-            track_data = spotify.track(track['uri'])
-            tracks.append({
-                "trackName": track_data['name'],
-                "trackPopularity": track_data['popularity'],
-                "trackArtist": track_data['artists'][0]['name'],
-                "trackFeatures": track,
-            })
-
-        return(jsonify(tracks))
-
-    except Exception:
-        return (f'Something went wrong grabbing the audio features')
+    trackURIs = list(request.args.values())
+    _, auth_manager = initialize_spotify(session)
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+    track_audio_features = spotify.audio_features(trackURIs)
+    tracks = []
+    for track in track_audio_features:
+        track_data = spotify.track(track['uri'])
+        tracks.append({
+            "trackName": track_data['name'],
+            "trackPopularity": track_data['popularity'],
+            "trackArtist": track_data['artists'][0]['name'],
+            "trackFeatures": track,
+        })
+    return(jsonify(tracks))

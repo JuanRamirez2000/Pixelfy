@@ -110,7 +110,7 @@ interface TrackAudioFeatures {
   valence: number;
 }
 
-interface TrackCompleteInfo {
+interface TrackFeatures {
   trackArtist: string;
   trackFeatures: TrackAudioFeatures;
   trackName: string;
@@ -187,5 +187,5 @@ export type {
   SpotifyUserTopTracks,
   SpotifyUserTracks,
   Track,
-  TrackCompleteInfo,
+  TrackFeatures,
 };
